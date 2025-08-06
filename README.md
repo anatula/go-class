@@ -12,6 +12,15 @@ Every program has to have a main function, it tells go where does the program st
 Modular language you can put the program in different files and compile it together
 Put different parts of the program into packages. But the main function has to be in a package main
 We need to import any package we use
+Use `go run <file.go>`
+
+class 02
+- In some languages the function main takes parameters that represent the command line arguments but Go doesn't do that
+Instead we're gonna import the `os` package
+Use `go run <file.go> <arg1>`
+- Create a package to execute a specific function  
+
+[Continue with class 02](https://youtu.be/-EYNVEv-snE?feature=shared&t=298)
 
 Compiles (it sticks it in some secret temp directory) and run (and then get rid of what left over)
 `go run hello-world.go`
