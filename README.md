@@ -101,7 +101,8 @@ go 1.15
 
 - Root files are treated as part of the module’s "core" packages
 
-- in the class02 module, we'll create a new package test 
+- in the class02 module, we'll create a new package test
+- 
 
 #### Conventions 
 - Generally, it is not recommended to use multiple Go modules in one repository
