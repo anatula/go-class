@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main() {
+func main2() {
 	a := 2
 	b := 2.1
 	// %T type of
