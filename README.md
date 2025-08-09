@@ -104,6 +104,6 @@ go 1.15
 #### Conventions 
 - Generally, it is not recommended to use multiple Go modules in one repository
 - Base your module path on a URL that you own or control. For example, a good module path would be github.com/user/project.
-- The module path doesn't need to be a 'real' functioning URL with something hosted at it. It's really just an arbitrary string which acts as a unique identifier for your module unless you make an open source package then your module path must be the location that the code will be fetchable from (github.com/example/package)
+- The module path doesn't need to be a 'real' functioning URL with something hosted at it. It's really just an arbitrary string which acts as a unique identifier for your module unless you make an open source package then your module path must be the location that the code will be fetchable from (github.com/example/package).
 
 [Continue with class 02](https://youtu.be/-EYNVEv-snE?feature=shared&t=298)
