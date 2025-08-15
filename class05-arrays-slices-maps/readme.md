@@ -10,7 +10,7 @@
 - map:      `map[string]int` map of string to integer, map of keys to values (not necessarily consecutive) 
 
 #### Arrays
-![myimage](array.png)
+![myimage](arrays.png)
 
 - array `d` assignment, get a copy of the `b` elements (ELEMENTS ARE COPIED, NOT SAME MEMORY)
 - no 'descriptor' like strings (one string could point to another string)
@@ -20,7 +20,7 @@
 
 #### Slice
 - like and array, but more like a string
-- the slice has a descriptor and point to other memory
+- the slice has a descriptor and it points at some other memory
 - it always has an array behind it
 - 
 
