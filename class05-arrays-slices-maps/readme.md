@@ -62,3 +62,20 @@ copy(c,b) // copies only 3 elements
 - Most of the time we are going to create slices (go will provide an array behind it to hold the values)
 - Strings are inmutable, slices are changables
 
+### Maps
+![myimage](./img/maps.png)
+- Another built-in type
+- behind the scenes there's hash table
+- `var m map[string]int --> map[key-type]value-type --> lookup using string` (`m` is mil, it doesn't reference any actual hastable)
+- `m` is another desctiptor: something that refers to a hashtable (at the moment is nil)
+- `p := make(map[string]int) `
+- string is immutable and comparable
+- built-in function `make` for memory allocation and initialization. It allows to create slices, maps, and channels. Unlike basic data types, these complex types have an underlying structure that requires proper initialization before use.
+- maps can be read from even when empty or nil, can't write to nil map , so need to 'make' it (create hashtable in the bg so we have a place to put keys and variables)
+- `m` is another descriptor is something that refers to a hashtable (string descriptor has a pointer and length, array has pointer, a length and capacity)
+- any time read key doesnt exist you get the default value of that type
+- you can ask for an lenth of empty or nill map, you can read keys out of empty nill map, but you CAN'T WRITE only write keys to a map that exists - empty or not- a map variable is null (no hashtable behind it) it will crash
+- `m = p` copies `p` descriptor into `m` descriptor, `m` points to same hashtable `p` points to
+- Maps are passed by reference no copying
+- the type used for keys must have == and != defined (not slices, maps or funcs)
+- same as 2 slices ref same backing array or 2 strings ref the sequence of characters
