@@ -28,3 +28,4 @@ fmt.Printf("%v", string(b))
 - `io/ioutul` read or write entire file to memory
 - `strconv` parse numbers from text
 - Always check the error, the file might not really be open
+- `ReadAll` is return slice of bytes and error, that's what a file is. Read the entire file, if small ok. If large, I'll get a reaaly big slice of bytes, 1Terabyte, i don't have enough memory for that.
