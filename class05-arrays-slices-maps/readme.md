@@ -36,7 +36,7 @@
 - `e := a` alias, `e` is a new variable, `a` is a copy of the descriptor
 - The name [8:11] 11-8 = 3 elements (index 8,9,10) `for i := 8; i<11; i++ {}` `[8,11)`
 
-### Slices vs Arrays
+#### Slices vs Arrays
 ![myimage](./img/slices-vs-arrays.png)
 - Most Go APIs take slices as inputs, not arrays because it can represent an arbitrary amount of elements
 - arrays fixed length, if we pass them around we copy them (copied around, not efficient)
@@ -78,4 +78,49 @@ copy(c,b) // copies only 3 elements
 - `m = p` copies `p` descriptor into `m` descriptor, `m` points to same hashtable `p` points to
 - Maps are passed by reference no copying
 - the type used for keys must have == and != defined (not slices, maps or funcs)
-- same as 2 slices ref same backing array or 2 strings ref the sequence of characters
+- same as 2 slices referencing the same backing array or 2 strings referencing a sequence of characters
+
+### Map literal
+![myimage](./img/map-literal.png)
+- `m` is a map starts with 3 keys and values. Put them in the code using a map literal {...}
+- `n` is nil
+- Can't compare `m` and `n`
+- `cap` capacity leftover does NOT work for maps (work for slices)
+- 2 ways to index a map: get 1 value o get 2 values
+- `p := map[string]int{}` non-nil but empty
+- `b , ok := p["and"]` returns 0, false (key missing)
+- `p["the"]++` add 1 to key "the"
+- `c , ok := p["the"]` returns 1, true 
+```
+if w,o := p["the"]; ok {
+    // we know w is not the default value
+}
+```
+- the 1st part declares 2 variables `w`,`ok` by indexing `p` with string `"the"`
+- 2nd part is the **actual if condition** a boolean tells if i do the if logic
+
+### Built-ins
+
+- `len` length for string, array, slice, map
+- arrays have a `cap` (constant, fixed size)
+- a slice has a `cap` tells me how much more space is in the slice. A slice has some memory allocated, put 2 elements, len is 2, but still has excess capacity that i could append into before the slice gets reallocated into a new block of memory. So I can create a slice of cap 10, len 0. I can append 10 times it will be full, 11th element will be realocate it
+- `make`function make slices and map, a way to actually constructing the store behind the descriptor
+- slices have `copy` and `appemd` fn. 
+- `c := append(c, d)` We're always gonna reassign the result of append back into the slice (slice of 10, add 11th, will have to reallocate for space for 16, copy the 10 ones and 11 one, now i have a different block of memory holding my elements). If I don't assign the result to append back to the variable `c` it will just refer to the old outdated won't show results of append.
+- We can `make` maps
+- We can `delete(m, k)` delete key k (safe to delete a non-existing key)
+
+### nill
+```
+var s []int // declare variable s of type of slice of int, is nil, no slice
+l := len(s) // 0 since empty (no need to check if nill first)
+for _, v := range s { ... } //range over slice, if nil, will safely not do anything
+```
+
+```
+var m map[string]int // map variable exists, descriptor exists, a nil map
+i,ok := m["int"] // 0, false  
+```
+
+- KEY IDEA OF GO: "MAKE THE ZERO OR NILL VARIABLE USEFUL"
+- if i declare var of type and get init to some logical init value, empty string, 0, nil pointers, safe to use
