@@ -25,6 +25,15 @@
 
 - `c := 2` (only inside in functions) SHORT DECLARATION OPERATOR (c has value 2 and type int)
 
+```
+x := 5   // declares x and assigns 5
+x = 10   // assigns a new value to existing x
+```
+If used just `=` for both, the compiler wouldn't know whether you wanted to declare a new variable or just update an existing one.
+
+So, the : in := signals:
+➡️ "This is a declaration of a new variable"
+
 #### boolean
 -  `bool` true/false logical value
 - ⚠️ NOT convertible to/from integers!
