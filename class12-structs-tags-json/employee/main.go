@@ -13,14 +13,17 @@ type Employee struct {
 }
 
 func main() {
-	b := Employee{"Lamine", 2, nil, time.Now()}
-	e := Employee{
+	c := map[string]*Employee{}
+
+	c["Lamine"] = &Employee{"Lamine", 2, nil, time.Now()}
+	c["Matt"] = &Employee{
 		Name:   "Matt",
 		Number: 1,
-		Boss:   &b,
+		Boss:   c["Lamine"],
 		Hired:  time.Now(),
 	}
 
-	fmt.Printf("%T %+[1]v \n", e)
+	fmt.Printf("%T %+[1]v \n", c["Lamine"])
+	fmt.Printf("%T %+[1]v \n", c["Matt"])
 
 }
