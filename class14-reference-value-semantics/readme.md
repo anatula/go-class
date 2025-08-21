@@ -32,3 +32,7 @@
 - don't forget when use append to assign back to origanl slice variable
 - when doing changes always return the slice
 - risky: keeping a pointer to an element of a slice
+
+- THE SINGLE BIGGEST ISSUE IN GO IS ANYTIME YOU TAKE A REFERENCE TO A MUTATING LOOP VARIABLE AND YOU KEEP IT
+- SEEN THAT WITH CLOSURE
+- SEEN THAT WITH COPYING INTO SOME DATA STRUCTURE LIKE SLICE
