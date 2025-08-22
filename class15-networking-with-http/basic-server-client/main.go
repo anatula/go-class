@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"html/template"
-	"io/ioutil"
 	"log"
 	"net/http"
 )
@@ -32,18 +31,17 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 	defer resp.Body.Close()
 
-	body, err := ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusServiceUnavailable)
-		return
-	}
-
 	var item todo
 
-	err = json.Unmarshal(body, &item)
-
-	if err != nil {
+	// resp.Body is io.ReadCloser
+	// io.ReadCloser is an interface with methods resp.Body can pass it to NewDecoder
+	// NewDecoder takes an io.Reader, is an interface, it describes where object which provides a read
+	// method, so that bytes can be read from it
+	// I can have a reader from a file, from a socker, or a byte buffer can be treated as a reader
+	// I can pass all sorts of paramters into newDecoder that will satisfy the io.Reader interface
+	// and the decoder will be able to decode by reading the bytes directly from that reader
+	// resp.Body is a reader
+	if err = json.NewDecoder(resp.Body).Decode(&item); err != nil {
 		http.Error(w, err.Error(), http.StatusServiceUnavailable)
 		return
 	}
