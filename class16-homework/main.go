@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-const base = "https://xkcd.com/"
-const file = "/info.0.json"
+const base = "https://xkcd.com"
+const file = "info.0.json"
 
 type Comic struct {
 	Month      string `json:"month"`
@@ -24,29 +24,39 @@ type Comic struct {
 	Day        string `json:"day"`
 }
 
-func main() {
-	const num = 571
-	resp, error := http.Get(base + "571" + file)
+// Each HTTP response has its own Body (an io.Reader)
+// Decoders are tied to a specific reader - you can't reuse a decoder across different readers
+// Response bodies must be closed to avoid resource leaks
+
+func downloadComic(num int) Comic {
+	url := fmt.Sprintf("%s/%d/%s", base, num, file)
+	resp, error := http.Get(url)
 	if error != nil {
 		fmt.Fprint(os.Stderr, error)
 		os.Exit(-1)
 	}
+	if resp.StatusCode != http.StatusOK {
+		fmt.Fprint(os.Stderr, error)
+		os.Exit(-1)
+	}
 
-	if resp.StatusCode == http.StatusOK {
-
-		// Decode from stream into our struct
-		var c Comic
-		if err := json.NewDecoder(resp.Body).Decode(&c); err != nil {
-			fmt.Fprint(os.Stderr, error)
-			os.Exit(-1)
-		}
-
-		fmt.Printf("%#v \n", c)
-		// Convert back to JSON with original lowercase field names
-		//jsonData, _ := json.MarshalIndent(c, "", "  ")
-		//fmt.Println(string(jsonData))
-
+	var c Comic
+	if err := json.NewDecoder(resp.Body).Decode(&c); err != nil {
+		fmt.Fprint(os.Stderr, err)
+		os.Exit(-1)
 	}
 
 	defer resp.Body.Close()
+	return c
+}
+
+func main() {
+	var index = make(map[int]Comic)
+	for num := 570; num <= 575; num++ {
+		c := downloadComic(num)
+		fmt.Println(c.Num, c.Title)
+		index[num] = c
+	}
+
+	fmt.Println(index[571])
 }
