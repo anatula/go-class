@@ -1,31 +1,51 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 )
 
-const base = "https://xkcd.com/571/info.0.json"
+const base = "https://xkcd.com/"
+const file = "/info.0.json"
+
+type Comic struct {
+	Month      string `json:"month"`
+	Num        int    `json:"num"`
+	Link       string `json:"link"`
+	Year       string `json:"year"`
+	News       string `json:"news"`
+	SafeTitle  string `json:"safe_title"`
+	Transcript string `json:"transcript"`
+	Alt        string `json:"alt"`
+	Img        string `json:"img"`
+	Title      string `json:"title"`
+	Day        string `json:"day"`
+}
 
 func main() {
-	resp, error := http.Get(base)
+	const num = 571
+	resp, error := http.Get(base + "571" + file)
 	if error != nil {
 		fmt.Fprint(os.Stderr, error)
 		os.Exit(-1)
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		body, error := ioutil.ReadAll(resp.Body)
 
-		if error != nil {
+		// Decode from stream into our struct
+		var c Comic
+		if err := json.NewDecoder(resp.Body).Decode(&c); err != nil {
 			fmt.Fprint(os.Stderr, error)
 			os.Exit(-1)
 		}
-		sb := string(body)
 
-		fmt.Printf("%#v \n\n\n\n\n %#v", body, sb)
+		fmt.Printf("%#v \n", c)
+		// Convert back to JSON with original lowercase field names
+		//jsonData, _ := json.MarshalIndent(c, "", "  ")
+		//fmt.Println(string(jsonData))
+
 	}
 
 	defer resp.Body.Close()
