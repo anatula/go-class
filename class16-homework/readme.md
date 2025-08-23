@@ -23,3 +23,12 @@ defer resp.Body.Close()
 var user User
 err = json.NewDecoder(resp.Body).Decode(&user)
 ```
+Run exercises
+
+```go
+cd downloader
+go run main.go xkcd.json 
+cd searcher
+go run main.go ../downloader/xkcd.json someone bed sleep
+```
+
