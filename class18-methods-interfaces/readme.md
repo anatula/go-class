@@ -35,5 +35,51 @@ fmt.Printf("%T: %[1]v \n", s)
 - Both components are nil
 - There's no concrete type associated with it
 - There's no concrete value stored
-- This is different from a non-interface type where %T would always show the static type:
+- This is different from a non-interface type where %T would always show the static type
 
+### Why interfaces?
+
+![](./img/why-interfaces.png)
+
+- instead of writing many functions for many concrete types, we define our function in terms of abstract behavior (something we write to)
+- interface in the io package called Writer, specify a Write method, it takes a byte slice
+- byte slice is the common denominator
+- no strings, not slices, not part of actual hardware
+- no `implements` keyword. Why? interfaces in go is from the consumer not the provider side.
+- "I'm some piece of function and I need a parameter that provide certain behaviour, I (the consumer) want this particular interface with this particular method set to provide this behaviour.
+-  Its up to the provider to provide the right methods.
+-  I can have existing objects in a program with methods and create new interface somewhere else with something like Write (that is the behaviour I want as a consumer) only want to capture one piece of behaviour.
+- Go does typing is structural, that way we do interface in go, any type that provides the right methods to satisfy the interface is a member of the interface type, we don't say implements, its automatic.
+
+### Go Interfaces: Consumer-Driven & Structural
+In Go, interfaces are defined by the consumer (the code that uses them), not the provider (the type that implements them).
+
+- The Consumer (fmt package): Defines the Stringer interface because it needs the String() behavior to print values.
+
+- The Provider (IntSlice): Implements a String() string method for its own reasons, completely unaware of Stringer.
+
+#### How They Connect: Structural Typing
+Go uses structural typing ("duck typing") for interfaces. The compiler automatically checks if a type's structure (its method set) matches an interface's requirements. There is no implements keyword.
+
+fmt asks: "Do you have a String() string method?"
+
+IntSlice answers: "Yes, I do."
+
+Result: IntSlice silently satisfies Stringer and works with fmt.Println.
+
+#### The Power: Retroactive Compatibility
+This means you can define a new interface today that describes what an existing type already did yesterday, and they will work together automatically. This creates incredibly flexible and decoupled code.
+
+### Not just structs
+- A method may be defined on any user-declared (named) type not just structs
+- I can't put methods on int, built in types don't have methods, there are functions that work on them. I wrap them in another type (may need type conversion, but they are compatibles underneath)
+
+### Receivers
+
+![](./img/receivers.png)
+
+Two kinds: pointer and value
+
+- value receiver: the method gets a copy, `Offset` takes `x` and `y` values, adds them to actual receiver but returns a new Point (receiver `p` is not changed, can't be chaged, it came in as a copy)
+
+- pointer receiver: `Move` actually changes the coordinates. Change the Pointer receiver . 
