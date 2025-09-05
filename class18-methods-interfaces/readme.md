@@ -82,4 +82,17 @@ Two kinds: pointer and value
 
 - value receiver: the method gets a copy, `Offset` takes `x` and `y` values, adds them to actual receiver but returns a new Point (receiver `p` is not changed, can't be chaged, it came in as a copy)
 
-- pointer receiver: `Move` actually changes the coordinates. Change the Pointer receiver . 
+- pointer receiver: `Move` actually changes the coordinates of receiver (original object). Change the Pointer receiver . 
+
+### Interface and substitution
+
+```
+var w io.Writer
+var rwc io.ReadWriteCloser
+
+w = os.Stdout 
+rwc = os.Stdout  
+```
+
+- os.Stdout is a file pointer and files have the same behaviour
+- os.Stdout is *os.File has all 3 methods
