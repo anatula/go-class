@@ -96,3 +96,79 @@ rwc = os.Stdout
 
 - os.Stdout is a file pointer and files have the same behaviour
 - os.Stdout is *os.File has all 3 methods
+
+### Value Receiver
+
+```
+type IntSet map[int]bool
+
+func (s IntSet) String() string {
+    return "IntSet implementation"
+}
+
+// This WILL compile:
+var _ = IntSet{}.String() // OK
+```
+
+#### Pointer Receiver Case
+```
+type IntSet map[int]bool
+
+func (s *IntSet) String() string {
+    return "IntSet implementation"
+}
+
+// This will NOT compile:
+var _ = IntSet{}.String() // ERROR: cannot call pointer method on IntSet literal
+```
+
+The error occurs because:
+- IntSet{} creates a value (not a pointer)
+- String() expects a pointer receiver (*IntSet)
+- Go cannot automatically take the address of a temporary literal (value not tied anywhere, no place, no address, no pointer)
+
+#### Solutions if you have a pointer receiver:
+1. Create a variable first (created variable and it has a place)
+```
+s := IntSet{}
+var _ = s.String() // Works - Go automatically takes address of s
+```
+
+```
+type IntSet struct { }
+func (*IntSet) String() string
+var s IntSet
+var _ fmt.Stringer = &s // OK
+var _ fmt.Stringer = s // ERROR
+```
+- fmt.Stringer represents an object that has a String method
+- But we defined the String method (of IntSet) to work on the pointer reciver
+- to make the assignment work I have to have the address of object 
+
+### Interface Composition
+
+![](./img/interface-composition.png)
+
+- *File is Reader and Writer
+- Interfaces should be small (OK 1 method interface)
+- I want multiple behaviours compose them
+
+### Interface declarations
+
+- LIMITATION: you have to declare the methods in the same package (as the concrete type)
+- when Go compiles, it wants to know all the methods for the type all at once
+- In Go, we want **static typing** (we want to know all methods that type has)
+- We CAN'T extend a type by adding methods in a different package, we can extend the type (composition of structs)
+- Similar way i took int wrapped in ByteCounter. 
+- I can create a struct that embeds another struct (I may have to do some type casting)
+
+```go
+type Bigger struct {
+    my.Big // get all Big methods
+}
+func (b Bigger) DoIt() { // add more method here
+    ...
+}
+```
+- Bigger is not a Big (need to do type casting)
+- Bigger has one more method and Big methods
