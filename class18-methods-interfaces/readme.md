@@ -172,3 +172,9 @@ func (b Bigger) DoIt() { // add more method here
 ```
 - Bigger is not a Big (need to do type casting)
 - Bigger has one more method and Big methods
+
+### Last notes
+- interface Stringer -> String
+- interface Distancer -> Distance
+- interface Writer -> Write
+- Composition is not inheritance, I have a Point in it, but is not a ColoredPoint, not a sub-class 
