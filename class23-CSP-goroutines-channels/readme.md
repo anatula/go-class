@@ -50,3 +50,14 @@ You need to make sure it doesn't get block by mistake
 - pass data through it
 - transfer ownership of data. Think a sequential process, generate some piece of data, sends it through a channel to another. By sending its giving the ownership. In theory, as long as one goroutine has that data at a time, the race conditions aren't a problem
 - role as sync tool: communicate something is done
+
+### Exercise
+```
+time go run main.go 
+2025/09/10 00:09:25 https://wsj.com      66.578ms 
+2025/09/10 00:09:25 https://nytimes.com  126.696ms 
+2025/09/10 00:09:25 https://google.com   285.833ms 
+2025/09/10 00:09:25 https://amazon.com   564.035ms 
+go run main.go  0.29s user 0.29s system 82% cpu 0.707 total
+```
+- The whole thing took less than a second, If i add all the times they add more than 1 second, so they didn't run sequentially. Each URL lookup is less than a total time to run my program
