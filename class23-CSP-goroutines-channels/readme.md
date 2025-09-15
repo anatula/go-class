@@ -61,3 +61,105 @@ time go run main.go
 go run main.go  0.29s user 0.29s system 82% cpu 0.707 total
 ```
 - The whole thing took less than a second, If i add all the times they add more than 1 second, so they didn't run sequentially. Each URL lookup is less than a total time to run my program
+
+### Exercise Sieve of Eratosthenes algorithm 
+- classic implementation of problem using goroutines and channels to find prime numbers
+
+#### generate function
+```go
+func generate(limit int, ch chan<- int) {
+    for i := 2; i < limit; i++ {
+        ch <- i
+    }
+    close(ch)
+}
+```
+- Generates numbers from 2 to limit-1
+- Sends each number to the channel
+- Closes the channel when done (important for graceful termination)
+
+#### filter function
+```go
+func filter(src <-chan int, dst chan<- int, prime int) {
+    for i := range src {
+        if i%prime != 0 {
+            dst <- i
+        }
+    }
+    close(dst)
+}
+```
+- Takes numbers from src channel
+- Filters out multiples of the given prime number
+- Passes non-multiples to dst channel
+- Closes dst when src closes (propagates closure)
+
+#### sieve function (main logic)
+```go
+func sieve(limit int) {
+    ch := make(chan int)
+    go generate(limit, ch)
+    
+    for {
+        prime, ok := <-ch
+        if !ok {
+            break
+        }
+        
+        ch1 := make(chan int)
+        go filter(ch, ch1, prime)
+        ch = ch1
+        
+        fmt.Print(prime, " ")
+    }
+    fmt.Println()
+}
+```
+##### Initial State:
+```
+generate → ch → main
+```
+
+##### Step 1: First prime (2)
+- Generate sends 2 to ch
+- main reads 2, recognizes it as prime
+- Creates new channel ch1 and filter for prime 2
+```
+Now: generate → filter(2) → ch1 → main
+```
+- Prints "2 "
+
+##### Channel Closure Propagation
+When generate finishes:
+
+- generate closes its channel
+- filter(2) sees channel close, finishes processing, closes its output
+- filter(3) sees channel close, finishes processing, closes its output
+- ... and so on until main sees the final channel close
+
+#### The Magic: Channel Reassignment
+The key line that makes this work is:
+
+```go
+ch = ch1  // Update main's view of the input channel
+```
+Each time a new prime is found:
+
+- A new filter goroutine is created
+- The filter sits between the current channel and a new channel
+- main updates its reference to point to the new end of the chain
+
+So while generate sends numbers only once, those numbers get processed by multiple filters as they pass through the pipeline.
+
+```
+generate → filter(2) → ch1 → main
+                      ↑
+                (ch now points here)
+```
+
+##### Concepts
+- Goroutines: Lightweight concurrent execution
+- Channels: Communication between goroutines
+- Pipeline pattern: Data flows through multiple processing stages
+- Channel closure propagation: Graceful termination
+
