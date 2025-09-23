@@ -33,7 +33,7 @@ func main() {
 	tasksChannel := make(chan Task, chanBufSize)
 
 	// start 3 workers
-	for i := 0; i <= wNum; i++ {
+	for i := 1; i <= wNum; i++ {
 		//  whole channel with a usage restriction
 		// you can only RECEIVE from it
 		go worker(i, tasksChannel, done)
