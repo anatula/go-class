@@ -4,5 +4,5 @@ Repo for [Go class](https://www.youtube.com/watch?v=iDQAZEJK8lI&list=PLoILbKo9rG
 
 [Continue with class 24](https://youtu.be/tG7gII0Ax0Q?feature=shared&t=36)
 
-Other videos to watch:
-- [GopherCon 2017: Understanding Channels - Kavya Joshi](https://www.youtube.com/watch?v=KBZlN0izeiY)
+Other videos watched:
+- [GopherCon 2017: Understanding Channels - Kavya Joshi](https://www.youtube.com/watch?v=KBZlN0izeiY) *Notes in class23 folder*

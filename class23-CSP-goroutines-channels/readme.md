@@ -163,3 +163,89 @@ generate → filter(2) → ch1 → main
 - Pipeline pattern: Data flows through multiple processing stages
 - Channel closure propagation: Graceful termination
 
+## GopherCon 2017: Understanding Channels - Kavya Joshi Notes
+
+Channels: 
+- **are goroutine safe**
+- **stores up to capacity elemenents values and provide FIFO semantics**
+- sends values between goroutines
+- can cause them to block/unblock
+
+### create a channel
+- use built-in make function
+- buffered (non-zero capacity) or unbuffered (sync channels)
+- making a chanel gives the previous properties (first 2, last 2 have to do with runtime behaviour)
+- want a goroutine safe FIFO struct ? use a queue with a lock. That's what channels do:
+    - making a channel allocates `hchan` struct, it has some fields that implement a queue and others and has a mutex
+    - implementation of queue itself, circular buffer (rin buffer)
+    - the send and receive position are tracked using `sendx` and `recvx`
+    - make a channel with capacity 3, 3 slots, initially empty. Do an enqueue (`sendx` incremented):
+    ![myimage](./img/uchan1.png)
+    - Two more enqueue (channel is full) `sendx` and `recvx` have the same:
+    ![myimage](./img/uchan2.png)
+    - Dequeue, the `recvx` is incremented
+    ![myimage](./img/uchan3.png)
+
+- This `hchan` struct is allocated on the heap
+- make returns a pointer to it
+- when you make a channel, is just a pointer to `hchan`
+- That's why we can simply pass channels from one function to another (despite go's pass by value semantics, both functions ends up enqueue and deqeue from the same underline buffer, no need to pass pointers to channels because **the channel is a pointer under the hood**)
+![myimage](./img/uchan4.png)
+
+### sends and receives
+
+#### main goroutine 
+The main function is just the special "root" goroutine.
+Special properties of main goroutine:
+
+1. First goroutine - program starts with it
+2. Program exits when it returns
+3. Kills all other goroutines when it ends
+4. Cannot be started with go keyword
+5. Entry point of every Go program
+ 
+
+Now, we have a channel, use it
+Program only channel related. How send and receive operate. Assume single worker,a single sender and receiver (for simplicity). Call goroutine runnnin main G1 and goroutine G2 executes the worker function.
+![myimage](./img/uchan5.png)
+
+- `ch <- task0` G1 sends task0, it acquires the lock because it's going to modify the `hchan` struct, then performs enqueue and releases the lock
+- actual enqueing is a memory copy, it copies task0 into that slot of the buffer
+- `t := <- ch` G2 receives from the channel, it acquires the lock, it dequeue (memory copy, copy whatever is in that buffer slot to the memory corresponding to variable `t`) and releases the lock
+- This copying into and out of the buffer is what gives us memory safety when we use channel. The only memory both goroutine access (only memory they share) is `hchan` which is protected by mutex everything else is copies of memory.
+- *"Do not communicate by sharing memory (no shared memory except `hchan`) instead share memory by communicating (copies)"*
+- G1 has sent, G2 has receives, now empty channel. The task G2 is processing is taking a long time, while G1 keeps sending: `ch <- task1 ch <- task2 ch <- task3` and `ch <- task4` task4 can't be send (channel is full). G1 execution is pauses, will resume after a receive
+- How is this pause/resume of goroutine works? By calling into the runtime scheduler
+
+### Runtime scheduler
+- goroutines are user-space threads (created and managed by Go runtime not OS)
+- user-space threads are prefered to OS threads because they are less expensive (resource consumption) and scheduling overhead. So Go chooses user-space threads and the runtime is responsible for implementing them.
+- user-space threads have to actually run on OS threads and the part of the Go runtime responsible for that is the scheduler. And uses an M:N scheduling model
+
+![myimage](./img/uchan6.png)
+- 2 OS threads, 6 goroutines
+- Have some number of Go routines and few OS threds and the sheduler multiplexes those Go routine onto the few OS thredas
+
+![myimage](./img/uchan7.png)
+- M OS thread
+- G goroutine
+- P holds the context for scheduling (hold the list of goroutine ready to run, P holds run queues)
+- Anytime a goroutine need to run in OS thread, that OS thread must hold on to one of these P (that were it gets it worload from)
+- `gopark` is an internal function in the Go runtime that pauses a goroutine and allows other goroutines to run on the same thread. You won't call gopark directly in your code, but it's what happens under the hood when your goroutines block. The counterpart is `goready`, which wakes a parked goroutine back up.
+-  It's like a CPU scheduler doing a context switch between processes, but for goroutines within the Go runtime.
+- When a goroutine needs to be paused, like when perform a blocking channel send (full channel) call into runtime scheduler, the call it makes is "gopark" the currently running ro goroutine
+- calls into the scheduler and at this point the currently running goroutine (yellow G1) changes G1 state from running to waiting and removes that association between OS thread and goroutine (freeing the OS to run another goroutine)
+- Scheduler Pops a goroutine of a runqueue and schedules it to run on that OS thread (basically a context-switch)
+- When we entered gopark G1 was the running goroutine when the function returns a different goroutine is running.
+![myimage](./img/uchan8.png)
+
+### Blocking OS threads
+- Blocked our goroutine G1, good for performance, but not OS thread. We said OS threds are expensive, Go runtime strives to not spawn nor manage a lot of them
+- By doing this switching out of the Go routine and freeing OS thread to run another goroutine
+- Paused goroutine, once a channel receive happens and there is a space in the channel, we have to resume it, G1 needs to run
+- G1 sets up some state for resumption before it calls into the scheduler, the `hchan` struct stores waiting senders and receivers and stores them using the `sudog` struct (another).
+- Contains information about the waiting goroutine, it has a pointer to G and the element is waiting on
+
+![myimage](./img/uchan9.png)
+- G1 created `sudog`, G is set to G1 and the element its waiting to send is task4. It puts it on the channel sendq setting up a state for a receiver in the future to use that information to resume G1 and it calls into the scheduler and pauses it.
+- where is G2? the receiver is gonna perform a receiver, G2 dequeue element from buffer, dequeues (receives) task1, pops up sudog, it enqueue task4 into the buffer and finally resumes G1, sets it to runable.
