@@ -14,3 +14,7 @@
 - mutex and condition variables DON'T multiplex, CAN'T LOCK THEM SIMULTANEUSLY, CAN'T WAIT 2 CV SIM.
 - I can listen to more than 1 channel simultaneusly
 - Often see select in for loop, prev example: parallel GET of webpages, reading a channel inside a loop. Now we'll put a select inside a loop to read more than once, from 1 or more different channels and we'll be listening to them at the same time
+
+![myimage](./img/image.png)
+- Prometheus metric (to calculate how much was thrown away)
+- if overwhelmed don't use nothing at all. Logs make it worse
