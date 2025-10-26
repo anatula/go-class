@@ -29,6 +29,25 @@ The difference is: In Go it's safe to have **multiple readers and writers** for 
 - CSP model allows us to write async code in a async style
 - I write a message to something else. How message get scheduled and and how these something get scheduled across the CPU (is not my problem, it works)
 
+#### Eric Shull: Communicating Sequential Processes
+- sharing memory, non determinism (depend on OS scheduler, creates race conditions)
+- update a number at the same time
+- effort to solve, mutex or locks, can produce deadlocks
+- dificult to debug and reproduce, hard to ensure reliability
+- different processes or threads that wanna access the same memory/variable
+- There are complex solutions: semaphores, mutex, lock, atomic operations (wrap in the lock, done unlock it ...)
+- sysadmin works know PIPES shell scripting, they are simple a program output becomes the input of another. They are parallel, don't think about what comes before or after
+- CSP (Communicating Sequential Processes) is an algebra in the 70s
+- Primitive: processes (generic process, order of sequence/operations)
+- not threads (within a process like an OS), no shared memory (if one process has some object or value no other process have access, they are not sharing)
+- when one process hands a value to another process, it no longer has it, hand off a copy (theory)
+- channels, way processes communicate. You can pass whatever you want (data sructures)
+- in Go passed by value (you CAN pass pointers, you're sharing memory)
+- channels: can be one to one (publish/subscribe) one to manny (work queue, only one of the processes gets value, first), many to many
+- in go, make a buffered channel, put n values, you won't block or unbufered to "sync"
+- one process put value to a channel, it doesn't know wheter that channel is listened by 1,2,5, 0 process. Just put it there for others
+- Go and CSP: csp process = go routine (not necesarily a OS thread), CSP 1 way channel, in go you can create a 1way or 2way channel
+
 ### Goroutine
 - it's coroutine
 - A goroutine is a unit of independent execution (coroutine) 
