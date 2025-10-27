@@ -2,9 +2,9 @@
 Repo for [Go class](https://www.youtube.com/watch?v=iDQAZEJK8lI&list=PLoILbKo9rG3skRCj37Kn5Zj803hhiuRK6&index=1
 ) from [Matt Holiday](https://github.com/matt4biz)
 
-![](https://img.youtube.com/vi/juBGb6rvoec/default.jpg)
+![](https://img.youtube.com/vi/iDQAZEJK8lI/default.jpg)
 
-[🔖 Continue with class 30](https://www.youtube.com/watch?v=K1hwpNnCJgY&t=10s)
+[🔖 Continue with class 31](https://youtu.be/oTtYtrFv3gw?si=RvjZ7fDbmzx9gzp5&t=15)
 
 
 
