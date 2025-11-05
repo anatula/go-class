@@ -4,7 +4,7 @@ Repo for [Go class](https://www.youtube.com/watch?v=iDQAZEJK8lI&list=PLoILbKo9rG
 
 ![](https://img.youtube.com/vi/iDQAZEJK8lI/default.jpg)
 
-[🔖 Continue with class 33](https://youtu.be/T2fqLam1iuk?si=PmKU7E7KXGa9n56a&t=555)
+[🔖 Continue with class 33](https://youtu.be/T2fqLam1iuk?si=IrNs5cyMhasDI5lP&t=790)
 
 
 

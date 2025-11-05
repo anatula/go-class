@@ -12,4 +12,15 @@
 - slices can't be compared with == operator
 - `reflect` package has `reflect.DeepEqual(got, want)` use reflection to check if they are equal
 - reflection used json decoding and printing
-- 
+- `...` meanings: 
+    - allows a function to accept any number of arguments of the same type `func foo(values ...Type)`
+    - let the compiler determine the array length automatically `[...]Type{1, 2, 3}`
+    -  "unpacks" a slice into individual arguments `slice...`
+    ```go 
+    func printNumbers(a, b, c int) {
+        fmt.Printf("a=%d, b=%d, c=%d\n", a, b, c)
+    }
+
+    numbers := []int{10, 20, 30}
+    printNumbers(numbers...) // a=10, b=20, c=30
+    ```
