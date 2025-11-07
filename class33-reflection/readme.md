@@ -24,3 +24,5 @@
     numbers := []int{10, 20, 30}
     printNumbers(numbers...) // a=10, b=20, c=30
     ```
+
+- Reflect package: type assertion or switching on type, all doing reflection, going into type information compiler saved in the program, using to ask "what is this thing really?"

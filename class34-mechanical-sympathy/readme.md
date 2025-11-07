@@ -1,0 +1,16 @@
+## class 34: Mechanical Sympathy
+- term from racecar driving goes back a while
+- understand how the car works is better driver and get more out the car
+- understand how our machine works
+- go is to build in the cloud
+- already give up some things: archicure: microservices (overhead of overhead in communication, cost of development and operation)
+- code: read it and mantaining
+- optimizing? Topdown: architecture, design (algirthm, concurrency, layers of abstractions), implemntation (programming language and how we use memory)
+- MEC SYM: implementation level of things
+- Hard to do MEC SYM with an interpreted language (vs compiled language), they are designed to abstract away the machine away from you (can't see it)
+- Abstaction is expensive
+- 2005, processor stopped getting faster, increase in the number of cores, limitations of hardware (keep having more transistors)
+- Can't make a chip twice as fast (clock speed perspective) every 18 month
+- Gap between performance of CPU and memory
+- Keep making CPU faster, we can't do that with memory 
+- CPU chip and memory banks in a motherboard. There is a distance d between them
